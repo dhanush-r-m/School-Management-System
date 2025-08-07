@@ -38,4 +38,6 @@ Create a `.env` file in the root directory with your configuration:
 
 
 VITE_API_BASE_URL=http://localhost:3000/api
+
+
 VITE_APP_NAME=School Management System
