@@ -35,5 +35,7 @@ The frontend expects a backend server running at `http://localhost:3000` with th
 ## Environment Variables
 
 Create a `.env` file in the root directory with your configuration:
+
+
 VITE_API_BASE_URL=http://localhost:3000/api
 VITE_APP_NAME=School Management System
