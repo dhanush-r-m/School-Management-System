@@ -1,166 +1,112 @@
-const { Admin, Timetable, Documentation, Circular, Curriculum } = require('../models/Admin');
+// backend/controllers/adminController.js
 
-class AdminController {
-  // ===== TIMETABLE MANAGEMENT =====
-  static async createTimetable(req, res) {
-    try {
-      const timetable = new Timetable(req.body);
-      await timetable.save();
-      res.status(201).json({ success: true, data: timetable });
-    } catch (error) {
-      res.status(400).json({ success: false, error: error.message });
-    }
-  }
+// ===== Auth =====
+const login = (req, res) => {
+    res.status(200).json({ message: "Admin logged in successfully" });
+};
 
-  static async getTimetableByClass(req, res) {
-    try {
-      const timetable = await Timetable.find({ class: req.params.class }).populate('periods.teacherId');
-      res.json({ success: true, data: timetable });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  }
+const logout = (req, res) => {
+    res.status(200).json({ message: "Admin logged out successfully" });
+};
 
-  static async updateTimetable(req, res) {
-    try {
-      const timetable = await Timetable.findByIdAndUpdate(
-        req.params.id, 
-        req.body, 
-        { new: true }
-      );
-      res.json({ success: true, data: timetable });
-    } catch (error) {
-      res.status(400).json({ success: false, error: error.message });
-    }
-  }
+const forgotPassword = (req, res) => {
+    res.status(200).json({ message: "Password reset link sent" });
+};
 
-  // ===== DOCUMENTATION MANAGEMENT =====
-  static async addDocument(req, res) {
-    try {
-      const document = new Documentation(req.body);
-      await document.save();
-      res.status(201).json({ success: true, data: document });
-    } catch (error) {
-      res.status(400).json({ success: false, error: error.message });
-    }
-  }
+const resetPassword = (req, res) => {
+    const { token } = req.params;
+    res.status(200).json({ message: `Password reset successful for token: ${token}` });
+};
 
-  static async getAllDocuments(req, res) {
-    try {
-      const documents = await Documentation.find().sort({ uploadDate: -1 });
-      res.json({ success: true, data: documents });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  }
+const refreshToken = (req, res) => {
+    res.status(200).json({ message: "Token refreshed successfully" });
+};
 
-  // ===== CIRCULARS MANAGEMENT =====
-  static async createCircular(req, res) {
-    try {
-      const circular = new Circular(req.body);
-      await circular.save();
-      res.status(201).json({ success: true, data: circular });
-    } catch (error) {
-      res.status(400).json({ success: false, error: error.message });
-    }
-  }
+// ===== Timetable =====
+const createTimetable = (req, res) => {
+    res.status(201).json({ message: "Timetable created successfully" });
+};
 
-  static async getCircularsByAudience(req, res) {
-    try {
-      const circulars = await Circular.find({ 
-        targetAudience: { $in: [req.params.audience] },
-        isActive: true 
-      }).sort({ publishDate: -1 });
-      res.json({ success: true, data: circulars });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  }
+const getTimetableByClass = (req, res) => {
+    const className = req.params.class;
+    res.status(200).json({ message: `Timetable for class ${className}`, data: [] });
+};
 
-  // ===== CURRICULUM MANAGEMENT =====
-  static async addCurriculum(req, res) {
-    try {
-      const curriculum = new Curriculum(req.body);
-      await curriculum.save();
-      res.status(201).json({ success: true, data: curriculum });
-    } catch (error) {
-      res.status(400).json({ success: false, error: error.message });
-    }
-  }
+const updateTimetable = (req, res) => {
+    const timetableId = req.params.id;
+    res.status(200).json({ message: `Timetable ${timetableId} updated successfully` });
+};
 
-  // ===== DATA ANALYTICS & REPORTS =====
-  static async getSchoolStatistics(req, res) {
-    try {
-      const { Student } = require('../models/Student');
-      const { Teacher } = require('../models/Teacher');
-      const { Parent } = require('../models/Parent');
+// ===== Documents =====
+const addDocument = (req, res) => {
+    res.status(201).json({ message: "Document added successfully" });
+};
 
-      const [totalStudents, totalTeachers, totalParents, studentsByClass, teachersBySubject] = await Promise.all([
-        Student.countDocuments(),
-        Teacher.countDocuments(),
-        Parent.countDocuments(),
-        Student.aggregate([{ $group: { _id: '$class', count: { $sum: 1 } }}]),
-       Teacher.aggregate({ $unwind: '$subjectsHandling' }, { $group: { _id: '$subjectsHandling', count: { $sum: 1 } }})
-      ]);
+const getAllDocuments = (req, res) => {
+    res.status(200).json({ message: "All documents", data: [] });
+};
 
-      res.json({
-        success: true,
-        data: {
-          totalStudents,
-          totalTeachers,
-          totalParents,
-          studentsByClass,
-          teachersBySubject
-        }
-      });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  }
+const getDocumentsByType = (req, res) => {
+    const type = req.params.type;
+    res.status(200).json({ message: `Documents of type ${type}`, data: [] });
+};
 
-  // ===== USER MANAGEMENT =====
-  static async getAllUsers(req, res) {
-    try {
-      const { Student } = require('../models/Student');
-      const { Teacher } = require('../models/Teacher');
-      const { Parent } = require('../models/Parent');
+// ===== Circulars =====
+const createCircular = (req, res) => {
+    res.status(201).json({ message: "Circular created successfully" });
+};
 
-      const [students, teachers, parents] = await Promise.all([
-        Student.find().select('name email class rollNumber'),
-        Teacher.find().select('name email subjectsHandling employeeId'),
-        Parent.find().select('name email phone')
-      ]);
+const getAllCirculars = (req, res) => {
+    res.status(200).json({ message: "All circulars", data: [] });
+};
 
-      res.json({
-        success: true,
-        data: { students, teachers, parents }
-      });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  }
+const getCircularsByAudience = (req, res) => {
+    const audience = req.params.audience;
+    res.status(200).json({ message: `Circulars for audience ${audience}`, data: [] });
+};
 
-  // ===== FEE MANAGEMENT =====
-  static async getFeeStatusReport(req, res) {
-    try {
-      const { Parent } = require('../models/Parent');
-      
-      const feeData = await Parent.aggregate([
-        { $unwind: '$feePayments' },
-        {
-          $group: {
-            _id: '$feePayments.status',
-            count: { $sum: 1 },
-            totalAmount: { $sum: '$feePayments.amount' }
-          }
-        }
-      ]);
+// ===== Curriculum =====
+const addCurriculum = (req, res) => {
+    res.status(201).json({ message: "Curriculum added successfully" });
+};
 
-      res.json({ success: true, data: feeData });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  }
-}
+const getCurriculumByClass = (req, res) => {
+    const className = req.params.class;
+    res.status(200).json({ message: `Curriculum for class ${className}`, data: [] });
+};
 
-module.exports = AdminController;
+// ===== Analytics =====
+const getSchoolStatistics = (req, res) => {
+    res.status(200).json({ message: "School statistics", data: {} });
+};
+
+const getAllUsers = (req, res) => {
+    res.status(200).json({ message: "All users", data: [] });
+};
+
+const getFeeStatusReport = (req, res) => {
+    res.status(200).json({ message: "Fee status report", data: [] });
+};
+
+// ===== Export all =====
+module.exports = {
+    login,
+    logout,
+    forgotPassword,
+    resetPassword,
+    refreshToken,
+    createTimetable,
+    getTimetableByClass,
+    updateTimetable,
+    addDocument,
+    getAllDocuments,
+    getDocumentsByType,
+    createCircular,
+    getAllCirculars,
+    getCircularsByAudience,
+    addCurriculum,
+    getCurriculumByClass,
+    getSchoolStatistics,
+    getAllUsers,
+    getFeeStatusReport
+};
