@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -8,6 +7,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+require('dotenv').config();
+
 const dbConfig = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -21,9 +22,8 @@ const teacherRoutes = require('./routes/teacherRoutes');
 // Initialize Express app
 const app = express();
 
-// Connect to MongoDB
+// Connect to MongoDB (also ensures indexes)
 dbConfig.connect();
-dbConfig.createIndexes();
 
 // Middleware
 app.use(cors({
@@ -66,7 +66,7 @@ app.get('/api/health', async (req, res) => {
 app.use(errorHandler);
 
 // Handle 404
-app.all('*', (req, res, next) => {
+app.all('*', (req, res) => {
   res.status(404).json({
     status: 'fail',
     message: `Can't find ${req.originalUrl} on this server!`
