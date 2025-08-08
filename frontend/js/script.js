@@ -14,7 +14,7 @@ const editStudentForm = document.getElementById('editStudentForm');
 // Global Variables
 let currentUser = null;
 let currentRole = null;
-const API_BASE_URL = 'http://localhost:3000/api'; // Should match your backend URL
+const API_BASE_URL = 'http://localhost:3000'; // Should match your backend URL
 
 // Sample Data (in a real app, this would come from API calls)
 const sampleGrades = [
