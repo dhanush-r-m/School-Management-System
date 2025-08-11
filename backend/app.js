@@ -1,82 +1,55 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
-const hpp = require('hpp');
-const cookieParser = require('cookie-parser');
-require('dotenv').config();
+import express from "express";
+import {config} from 'dotenv';
+import cors from "cors";
+import {dbConnection} from "./database/dbConnection.js";
+import studentRouter from "./router/studentRouter.js";
+import teacherRouter from "./router/teacherRouter.js";
+import assignmentRouter from "./router/assignmentRouter.js";
 
-const dbConfig = require('./config/database');
-const errorHandler = require('./middleware/errorHandler');
+import announcementRouter from "./router/announcementRouter.js";
+import classRouter from "./router/classRouter.js";
+import libraryRouter from "./router/libraryRouter.js";
+import eventsRouter from "./router/eventsRouter.js";
+import examRouter from "./router/examRouter.js";
+import attendanceRouter from "./router/attendanceRouter.js";
+import usersRouter from "./router/usersRouter.js"
+import adminRegisterRouter from "./router/adminRegisterRouter.js"
+import  { errorHandler } from "./middlewares/errorHandler.js";
 
-// Import routes
-const authRoutes = require('./routes/authRoutes');
-const adminRoutes = require('./routes/adminRoutes');
-const parentRoutes = require('./routes/parentRoutes');
-const studentRoutes = require('./routes/studentRoutes');
-const teacherRoutes = require('./routes/teacherRoutes');
 
-// Initialize Express app
+
 const app = express();
+config({path: "./config/config.env"});
+ 
+app.use( 
+    cors({
+        origin: [process.env.FRONTEND_URL],
+        methods: ["GET", "POST", "PUT", "DELETE"], 
+    
+    }) 
+);
 
-// Connect to MongoDB (also ensures indexes)
-dbConfig.connect();
-
-// Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
-}));
-app.use(helmet());
-app.use(morgan('dev'));
-app.use(express.json({ limit: '10kb' }));
-app.use(cookieParser());
-app.use(mongoSanitize());
-app.use(xss());
-app.use(hpp());
-
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
-});
-app.use('/api', limiter);
-
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/parents', parentRoutes);
-app.use('/api/students', studentRoutes);
-app.use('/api/teachers', teacherRoutes);
-
-// Health check endpoint
-app.get('/api/health', async (req, res) => {
-  const dbStatus = await dbConfig.healthCheck();
-  res.status(200).json({
-    status: 'OK',
-    timestamp: new Date(),
-    database: dbStatus
+app.use((err, req, res, next) => {
+    errorHandler(err, req, res, next);
   });
-});
+ 
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
-// Error handling middleware
-app.use(errorHandler);
+app.use("/api/v1/students", studentRouter);
+app.use("/api/v1/teachers", teacherRouter);
+app.use("/api/v1/assignments", assignmentRouter);
 
-// Handle 404
-app.all('*', (req, res) => {
-  res.status(404).json({
-    status: 'fail',
-    message: `Can't find ${req.originalUrl} on this server!`
-  });
-});
+app.use("/api/v1/announcements", announcementRouter);
+app.use("/api/v1/class", classRouter);
+app.use("/api/v1/library", libraryRouter);
+app.use("/api/v1/events", eventsRouter);
+app.use("/api/v1/exam", examRouter);
+app.use("/api/v1/attendance", attendanceRouter);
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.use("/api/v1/users", usersRouter);
+app.use("/api/v1/register", adminRegisterRouter);
 
-module.exports = app;
+dbConnection()
+ 
+export default app;

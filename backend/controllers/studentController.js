@@ -1,74 +1,34 @@
-const { Student } = require('../models/Student');
+import { Student } from "../models/studentSchema.js";
+import { handleValidationError } from "../middlewares/errorHandler.js";
 
-class StudentController {
-  static async createStudent(req, res) {
-    try {
-      const student = new Student(req.body);
-      await student.save();
-      res.status(201).json({ success: true, data: student });
-    } catch (error) {
-      res.status(400).json({ success: false, error: error.message });
-    }
+export const createStudent = async (req, res, next) => {
+  console.log(req.body);
+  const { name, registrationNumber, grade } = req.body;
+  try {
+   if (!name || !registrationNumber || !grade ) {
+    return next("Please Fill Full Form!", 400);
   }
+  await Student.create({ name, registrationNumber, grade });
+  res.status(200).json({
+    success: true,
+    message: "Student Created!",
+  });   
+} catch (err) {
+  next(err);
+} 
+};
 
-  static async getAllStudents(req, res) {
-    try {
-      const students = await Student.find().populate('parentId');
-      res.json({ success: true, data: students });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  }
-
-  static async getStudentById(req, res) {
-    try {
-      const student = await Student.findById(req.params.id).populate('parentId');
-      if (!student) {
-        return res.status(404).json({ success: false, error: 'Student not found' });
-      }
-      res.json({ success: true, data: student });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  }
-
-  static async updateStudent(req, res) {
-    try {
-      const student = await Student.findByIdAndUpdate(
-        req.params.id, 
-        req.body, 
-        { new: true, runValidators: true }
-      );
-      
-      if (!student) {
-        return res.status(404).json({ success: false, error: 'Student not found' });
-      }
-      res.json({ success: true, data: student });
-    } catch (error) {
-      res.status(400).json({ success: false, error: error.message });
-    }
-  }
-
-  static async deleteStudent(req, res) {
-    try {
-      const student = await Student.findByIdAndDelete(req.params.id);
-      if (!student) {
-        return res.status(404).json({ success: false, error: 'Student not found' });
-      }
-      res.json({ success: true, message: 'Student deleted successfully' });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  }
-
-  static async getStudentsByClass(req, res) {
-    try {
-      const students = await Student.find({ class: req.params.class }).populate('parentId');
-      res.json({ success: true, data: students });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  }
+export const getAllStudents = async (req, res, next) => {
+  try {
+   const students = await Student.find();
+  res.status(200).json({
+    success: true,
+    students,
+  });   
+} catch (err) {
+  next(err);
 }
+};
 
-module.exports = StudentController;
+
+
