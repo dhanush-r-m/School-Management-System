@@ -1,12 +1,11 @@
 import { Student } from "../models/studentSchema.js";
-import { handleValidationError } from "../middlewares/errorHandler.js";
 
 export const createStudent = async (req, res, next) => {
   console.log(req.body);
   const { name, registrationNumber, grade } = req.body;
   try {
    if (!name || !registrationNumber || !grade ) {
-    return next("Please Fill Full Form!", 400);
+    return next(new Error("Please Fill Full Form!"));
   }
   await Student.create({ name, registrationNumber, grade });
   res.status(200).json({

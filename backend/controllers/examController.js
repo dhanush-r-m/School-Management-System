@@ -1,18 +1,17 @@
 
-import {Exam} from "../models/examSchema.js";
-import { handleValidationError } from "../middlewares/errorHandler.js";
+import { Exam } from "../models/examSchema.js";
 
-export const addExam = async (req, res, next) => {
+export const createExam = async (req, res, next) => {
   console.log(req.body);
-  const { name, registrationNumber, className, marks } = req.body;
+  const { subject, date, duration, totalMarks } = req.body;
   try {
-    if (!name || !registrationNumber || !className || !marks) {
-        handleValidationError("Please fill out all fields!", 400);
+    if (!subject || !date || !duration || !totalMarks) {
+      return next(new Error("Please fill out all fields!"));
     }
-    await Exam.create({ name, registrationNumber, className, marks });
+    await Exam.create({ subject, date, duration, totalMarks });
     res.status(200).json({
       success: true,
-      message: "A new exam has been added!",
+      message: "Exam Created!",
     });
   } catch (err) {
     next(err);

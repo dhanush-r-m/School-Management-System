@@ -1,18 +1,17 @@
-import {  Class } from "../models/classSchema.js";
-import { handleValidationError } from "../middlewares/errorHandler.js";
+import { Class } from "../models/classSchema.js";
 
 export const createClass = async (req, res, next) => {
   console.log(req.body);
-  const {grade } = req.body;
+  const { className, section, teacher } = req.body;
   try {
-    if (!grade ) {
-      handleValidationError("Please Fill Form!", 400);
-  }
-  await Class.create({ grade });
-  res.status(200).json({
-    success: true,
-    message: "Class Created!",
-  }); 
+    if (!className || !section || !teacher) {
+      return next(new Error("Please Fill Form!"));
+    }
+    await Class.create({ className, section, teacher });
+    res.status(200).json({
+      success: true,
+      message: "Class Created!",
+    });
   } catch (err) {
     next(err);
   }
@@ -20,11 +19,11 @@ export const createClass = async (req, res, next) => {
 
 export const getAllClasses = async (req, res, next) => {
   try {
-  const classes = await Class.find();
-  res.status(200).json({
-    success: true,
-    classes,
-  });  
+    const classes = await Class.find();
+    res.status(200).json({
+      success: true,
+      classes,
+    });
   } catch (err) {
     next(err);
   }

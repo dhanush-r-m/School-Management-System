@@ -1,12 +1,11 @@
 import { Teacher } from "../models/teacherSchema.js";
-import { handleValidationError } from "../middlewares/errorHandler.js";
 
- export const createTeacher = async (req, res, next) => {
+export const createTeacher = async (req, res, next) => {
   console.log(req.body);
     const { name, email, subject } = req.body;
     try {
          if (!name || !email || !subject ) {
-          handleValidationError("Please Fill Full Form!", 400);
+          return next(new Error("Please Fill Full Form!"));
     }
     await Teacher.create({ name, email, subject });
     res.status(200).json({

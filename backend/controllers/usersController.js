@@ -1,5 +1,4 @@
-import { handleValidationError } from "../middlewares/errorHandler.js";
-import {Admin } from "../models/adminRegisterSchema.js";
+import { Admin } from "../models/adminRegisterSchema.js";
 import { Student } from "../models/usersSchema.js";
 import { Teacher } from "../models/usersSchema.js";
 
@@ -7,7 +6,7 @@ export const adminSignIn = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     if (!email || !password) {
-      handleValidationError("Please provide email and password", 400);
+      return next(new Error("Please provide email and password"));
     }
     const existingAdmin = await Admin.findOne({ email });
 
@@ -23,19 +22,17 @@ export const adminSignIn = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Admin signed in successfully",
-
     });
   } catch (err) {
     next(err);
   }
 };
 
-
 export const studentSignIn = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     if (!email || !password) {
-      handleValidationError("Please provide email and password", 400);
+      return next(new Error("Please provide email and password"));
     }
     // Your sign-in logic for student goes here
     res.status(200).json({
@@ -51,7 +48,7 @@ export const teacherSignIn = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     if (!email || !password) {
-      handleValidationError("Please provide email and password", 400);
+      return next(new Error("Please provide email and password"));
     }
     // Your sign-in logic for teacher goes here
     res.status(200).json({
