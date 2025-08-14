@@ -58,9 +58,9 @@ const App = () => {
 
         {/* All the dashboard routes */}
 
-        <Route exact path="/admin/dashboard" element={<ProtectedRoute isAuthenticated={true}><AdminDashboard /></ProtectedRoute>} />
-        <Route exact path="/teacher/dashboard" element={<ProtectedRoute isAuthenticated={true}><TeacherDashboard /></ProtectedRoute>} />        
-        <Route exact path="/student/dashboard" element={<ProtectedRoute isAuthenticated={true}><StudentDashboard /></ProtectedRoute>} />
+        <Route exact path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+        <Route exact path="/teacher/dashboard" element={<ProtectedRoute><TeacherDashboard /></ProtectedRoute>} />        
+        <Route exact path="/student/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
 
         {/* Admin section here */}
 

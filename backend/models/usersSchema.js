@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -16,9 +17,19 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// export const Admin = mongoose.model('Admin Register', userSchema);
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+userSchema.methods.isValidPassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
 export const AdminLogin = mongoose.model('Admin Login', userSchema);
-export const Student = mongoose.model('Student Login', userSchema);
-export const Teacher = mongoose.model('Teacher Login', userSchema);
+export const StudentLogin = mongoose.model('Student Login', userSchema);
+export const TeacherLogin = mongoose.model('Teacher Login', userSchema);
 
 

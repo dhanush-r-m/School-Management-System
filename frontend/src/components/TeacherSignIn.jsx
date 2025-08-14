@@ -3,17 +3,20 @@ import React, { useState } from 'react';
 import { TeacherSignInContainer, FormContainer, InputField, SubmitButton } from '../styles/TeacherSignInStyles';
 import { useNavigate } from 'react-router-dom';
 import { signInTeacher } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 
 const TeacherSignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
       await signInTeacher({ email, password });
+      setUser({ role: 'teacher', email });
       navigate('/teacher/dashboard', { replace: true });
     } catch (error) {
       console.error('Teacher sign-in error:', error);

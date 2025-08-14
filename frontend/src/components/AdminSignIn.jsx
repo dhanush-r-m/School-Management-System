@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 import { AdminSignInContainer, FormContainer, InputField, SubmitButton } from '../styles/AdminSignInStyles';
 import { useNavigate } from 'react-router-dom';
 import { signInAdmin } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 
 const AdminSignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
   
     try {
       await signInAdmin({ email, password });
+      setUser({ role: 'admin', email });
       navigate('/admin/dashboard', { replace: true });
     } catch (error) {
       console.error('Error during sign-in:', error);
