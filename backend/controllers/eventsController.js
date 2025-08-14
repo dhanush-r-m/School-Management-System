@@ -1,4 +1,4 @@
-import { Event } from "../models/eventsSchema.js";
+import { Events } from "../models/eventsSchema.js";
 
 export const createEvent = async (req, res, next) => {
   console.log(req.body);
@@ -7,7 +7,7 @@ export const createEvent = async (req, res, next) => {
     if (!title || !description || !date || !location) {
       return next(new Error("Please fill all fields!"));
     }
-    await Event.create({ title, description, date, location });
+    await Events.create({ title, description, date, location });
     res.status(200).json({
       success: true,
       message: "Event Created!",
@@ -19,7 +19,7 @@ export const createEvent = async (req, res, next) => {
 
 export const getAllEvents = async (req, res, next) => {
   try {
-    const events = await Event.find();
+    const events = await Events.find();
     res.status(200).json({
       success: true,
       events,

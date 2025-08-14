@@ -1,4 +1,4 @@
-import { Attendance } from "../models/attendanceSchema.js";
+import Attendance from "../models/attendanceSchema.js";
 
 export const markAttendance = async (req, res, next) => {
   console.log(req.body);
