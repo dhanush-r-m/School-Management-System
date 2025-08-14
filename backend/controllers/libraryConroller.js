@@ -7,10 +7,10 @@ export const createBook = async (req, res, next) => {
     if (!bookname || !author) {
       return next(new Error("Please fill all fields!"));
     }
-    await Book.create({ bookname, author });
+    const book = await Book.create({ bookname, author });
     res.status(200).json({
       success: true,
-      message: "Book Added!",
+      book,
     });
   } catch (err) {
     next(err);

@@ -9,10 +9,10 @@ export const createAssignment = async (req, res, next) => {
     if (!title || !description || !grade || !deadline) {
       return next(new Error("Please Fill Full Form!"));
     }
-    await Assignment.create({ title, description, grade, deadline });
+    const assignment = await Assignment.create({ title, description, grade, deadline });
     res.status(200).json({
       success: true,
-      message: "Assignment Created!",
+      assignment,
     });
   } catch (err) {
     next(err);

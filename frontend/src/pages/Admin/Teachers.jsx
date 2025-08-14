@@ -74,7 +74,7 @@ const Teachers = () => {
           </AddTeacherForm>
           <TeacherList>
             {teachers.map((teacher) => (
-              <TeacherItem key={teacher.id}>{teacher.name} - {teacher.email} - {teacher.subject}</TeacherItem>
+              <TeacherItem key={teacher._id}>{teacher.name} - {teacher.email} - {teacher.subject}</TeacherItem>
             ))}
           </TeacherList>
         </TeachersContent>

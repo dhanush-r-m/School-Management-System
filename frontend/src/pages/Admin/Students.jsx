@@ -73,7 +73,7 @@ const Students = () => {
           </AddStudentForm>
           <StudentList>
             {students.map((student) => (
-              <StudentItem key={student.id}>{student.name} - {student.registrationNumber} - {student.grade}</StudentItem>
+              <StudentItem key={student._id}>{student.name} - {student.registrationNumber} - {student.grade}</StudentItem>
             ))}
           </StudentList>
         </StudentsContent>

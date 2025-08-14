@@ -7,10 +7,10 @@ export const createStudent = async (req, res, next) => {
    if (!name || !registrationNumber || !grade ) {
     return next(new Error("Please Fill Full Form!"));
   }
-  await Student.create({ name, registrationNumber, grade });
+  const student = await Student.create({ name, registrationNumber, grade });
   res.status(200).json({
     success: true,
-    message: "Student Created!",
+    student,
   });   
 } catch (err) {
   next(err);

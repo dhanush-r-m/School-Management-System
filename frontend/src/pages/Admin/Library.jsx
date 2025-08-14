@@ -36,11 +36,11 @@ const Library = () => {
 
   const addBook = async (book) => {
     try {
-      const response = await apiClient.post('/library', {
+      const response = await apiClient.post('/library/books', {
         bookname: book.title,
         author: book.author,
       });
-      setBooks([...books, response.data]);
+      setBooks([...books, response.data.book]);
     } catch (error) {
       console.error('Error adding book:', error);
     }
