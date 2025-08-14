@@ -1,15 +1,23 @@
 // StudentSignIn.js
 import React, { useState } from 'react';
 import { StudentSignInContainer, FormContainer, InputField, SubmitButton } from '../styles/StudentSignInStyles';
+import { useNavigate } from 'react-router-dom';
+import { signInStudent } from '../api/auth';
 
 const StudentSignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSignIn = () => {
-    // For demonstration purposes, we'll directly navigate to the student dashboard route
-    // Replace this with your actual sign-in logic
-    console.log('Student Sign In:', { email, password });
+  const navigate = useNavigate();
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    try {
+      await signInStudent({ email, password });
+      navigate('/student/dashboard', { replace: true });
+    } catch (error) {
+      console.error('Student sign-in error:', error);
+    }
   };
 
   return (
@@ -30,8 +38,7 @@ const StudentSignIn = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         /> 
-        {/* Use Link component to navigate to student dashboard */}
-        <SubmitButton to="/student/dashboard" onClick={handleSignIn}>Sign In</SubmitButton>
+        <SubmitButton onClick={handleSignIn}>Sign In</SubmitButton>
       </FormContainer>
     </StudentSignInContainer>
   );

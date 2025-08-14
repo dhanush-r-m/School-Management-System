@@ -1,23 +1,19 @@
 import React, { useState } from 'react';
 import { AdminRegisterContainer, FormContainer, InputField, SubmitButton } from '../styles/AdminRegisterStyles';
-import axios from 'axios'; // Import axios
+import { registerAdmin } from '../api/auth';
+import { useNavigate } from 'react-router-dom';
 
 const AdminRegister = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault(); // Prevent default form submission
   
     try {
-      const response = await axios.post('http://localhost:4000/api/v1/register/admin', { email, password }); 
-      if (response.status === 200) {
-        // Registration successful, redirect to admin login
-        window.location.href = '/admin-signIn';
-      } else {
-        // Handle registration errors
-        console.error('Registration failed');
-      }
+      await registerAdmin({ email, password });
+      navigate('/admin-signIn', { replace: true });
     } catch (error) {
       console.error('Error during registration:', error);
     }

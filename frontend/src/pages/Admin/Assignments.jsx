@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
-import axios from 'axios';
+import apiClient from '../../api/client';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -26,7 +26,7 @@ const Assignments = () => {
 
   const fetchAssignments = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/api/v1/assignments/getall');
+      const response = await apiClient.get('/assignments/getall');
       setAssignments(response.data.assignments);
     } catch (error) {
       console.error('Error fetching assignments:', error);
@@ -37,7 +37,7 @@ const Assignments = () => {
     e.preventDefault();
     if (newAssignment.title.trim() !== '' && newAssignment.description.trim() !== '' && newAssignment.grade.trim() !== '' && newAssignment.deadline.trim() !== '') {
       try {
-        const response = await axios.post('http://localhost:4000/api/v1/assignments', newAssignment);
+        const response = await apiClient.post('/assignments', newAssignment);
         // Display success toast message
         toast.success('Assignment added successfully');
         // Add the new assignment to the list

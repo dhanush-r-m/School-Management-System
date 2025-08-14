@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import Home from '../src/components/Home.jsx';
 import ChooseUser from '../src/components/ChooseUser';
 import AdminSignIn from '../src/components/AdminSignIn';
@@ -43,6 +45,7 @@ import CheckExamSection from '../src/pages/Teachers/Exams';
 const App = () => { 
   return (
     <Router>
+      <AuthProvider>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/choose-user" element={<ChooseUser />} />
@@ -55,9 +58,9 @@ const App = () => {
 
         {/* All the dashboard routes */}
 
-        <Route exact path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route exact path="/teacher/dashboard" element={<TeacherDashboard />} />        
-        <Route exact path="/student/dashboard" element={<StudentDashboard />} />
+        <Route exact path="/admin/dashboard" element={<ProtectedRoute isAuthenticated={true}><AdminDashboard /></ProtectedRoute>} />
+        <Route exact path="/teacher/dashboard" element={<ProtectedRoute isAuthenticated={true}><TeacherDashboard /></ProtectedRoute>} />        
+        <Route exact path="/student/dashboard" element={<ProtectedRoute isAuthenticated={true}><StudentDashboard /></ProtectedRoute>} />
 
         {/* Admin section here */}
 
@@ -96,6 +99,7 @@ const App = () => {
         <Route exact path="/teacher/settings" element={<TeacherProfileSection/>} />
 
       </Routes>
+      </AuthProvider>
     </Router>
   );
 };

@@ -1,23 +1,19 @@
 import React, { useState } from 'react';
 import { AdminSignInContainer, FormContainer, InputField, SubmitButton } from '../styles/AdminSignInStyles';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { signInAdmin } from '../api/auth';
 
 const AdminSignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
   
     try {
-      const response = await axios.post('http://localhost:4000/api/v1/users/signin', { email, password }); 
-      if (response.status === 200) {
-        // Sign-in successful, redirect to admin dashboard
-        window.location.href = '/admin/dashboard';
-      } else {
-        // Handle sign-in errors
-        console.error('Sign-in failed');
-      }
+      await signInAdmin({ email, password });
+      navigate('/admin/dashboard', { replace: true });
     } catch (error) {
       console.error('Error during sign-in:', error);
     }

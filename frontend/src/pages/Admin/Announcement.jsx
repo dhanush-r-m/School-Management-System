@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
-import axios from 'axios';
+import apiClient from '../../api/client';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -25,7 +25,7 @@ const Announcement = () => {
   // Function to fetch announcements
   const fetchAnnouncements = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/api/v1/announcements/getall');
+      const response = await apiClient.get('/announcements/getall');
       setAnnouncements(response.data.announcements);
     } catch (error) {
       console.error('Error fetching announcements:', error);
@@ -40,7 +40,7 @@ const Announcement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:4000/api/v1/announcements', {
+      const response = await apiClient.post('/announcements', {
         announcement: announcement, // Ensure that the key matches the backend model
       });
       console.log('Announcement sent:', response.data);

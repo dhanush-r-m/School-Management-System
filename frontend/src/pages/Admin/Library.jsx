@@ -1,7 +1,7 @@
 // Library.js
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
-import axios from 'axios';
+import apiClient from '../../api/client';
 import {
   LibraryContainer,
   Content,
@@ -27,7 +27,7 @@ const Library = () => {
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/api/v1/library/getall');
+      const response = await apiClient.get('/library/getall');
       setBooks(response.data.books);
     } catch (error) {
       console.error('Error fetching books:', error);
@@ -36,7 +36,7 @@ const Library = () => {
 
   const addBook = async (book) => {
     try {
-      const response = await axios.post('http://localhost:4000/api/v1/library', {
+      const response = await apiClient.post('/library', {
         bookname: book.title,
         author: book.author,
       });

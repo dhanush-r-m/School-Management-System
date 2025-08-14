@@ -1,15 +1,23 @@
 // TeacherSignIn.js
 import React, { useState } from 'react';
 import { TeacherSignInContainer, FormContainer, InputField, SubmitButton } from '../styles/TeacherSignInStyles';
+import { useNavigate } from 'react-router-dom';
+import { signInTeacher } from '../api/auth';
 
 const TeacherSignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSignIn = () => {
-    // For demonstration purposes, we'll directly navigate to the teacher dashboard route
-    // Replace this with your actual sign-in logic
-    console.log('Teacher Sign In:', { email, password });
+  const navigate = useNavigate();
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    try {
+      await signInTeacher({ email, password });
+      navigate('/teacher/dashboard', { replace: true });
+    } catch (error) {
+      console.error('Teacher sign-in error:', error);
+    }
   };
 
   return (
@@ -30,8 +38,7 @@ const TeacherSignIn = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         /> 
-        {/* Use Link component to navigate to teacher dashboard */}
-        <SubmitButton to="/teacher/dashboard" onClick={handleSignIn}>Sign In</SubmitButton>
+        <SubmitButton onClick={handleSignIn}>Sign In</SubmitButton>
       </FormContainer>
     </TeacherSignInContainer>
   );

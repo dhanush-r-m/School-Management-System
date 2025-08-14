@@ -1,7 +1,7 @@
 // Students.js
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
-import axios from 'axios';
+import apiClient from '../../api/client';
 import {
   StudentsContainer,
   Content,
@@ -24,7 +24,7 @@ const Students = () => {
 
   const fetchStudents = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/api/v1/students/getall');
+      const response = await apiClient.get('/students/getall');
       setStudents(response.data.students);
     } catch (error) {
       console.error('Error fetching students:', error);
@@ -35,7 +35,7 @@ const Students = () => {
     e.preventDefault();
     if (newStudent.name.trim() !== '' && newStudent.registrationNumber.trim() !== '' && newStudent.grade.trim() !== '') {
       try {
-        const response = await axios.post('http://localhost:4000/api/v1/students', newStudent);
+        const response = await apiClient.post('/students', newStudent);
         setStudents([...students, response.data.student]);
         setNewStudent({ name: '', registrationNumber: '', grade: '' });
       } catch (error) {

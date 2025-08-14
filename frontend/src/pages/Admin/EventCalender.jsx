@@ -1,7 +1,7 @@
 // EventCalendar.js
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
-import axios from 'axios';
+import apiClient from '../../api/client';
 import {
   EventCalendarContainer,
   Content,
@@ -22,7 +22,7 @@ const EventCalendar = () => {
   // Function to fetch events from the backend
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/api/v1/events/getall');
+      const response = await apiClient.get('/events/getall');
       setEvents(response.data.events || []);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -38,10 +38,13 @@ const EventCalendar = () => {
   const addEvent = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:4000/api/v1/events', {
-        event: newEvent,
+      await apiClient.post('/events', {
+        title: newEvent,
+        description: newEvent,
+        date: new Date().toISOString(),
+        location: 'TBD',
       });
-      setEvents([...events, response.data.event]);
+      await fetchEvents();
       setNewEvent('');
     } catch (error) {
       console.error('Error adding event:', error);
